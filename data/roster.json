@@ -1,0 +1,807 @@
+{
+ "meta": {
+  "org": "Shivray Pratishthan Canada",
+  "event": "Ganesh Utsav 2026",
+  "tagline": "॥ गणपती बाप्पा मोरया ॥",
+  "updatedAt": "2026-09-17T00:00:00Z",
+  "updatedBy": "import"
+ },
+ "instruments": [
+  {
+   "id": "dhol",
+   "label": "Dhol",
+   "color": "#7B1C1C"
+  },
+  {
+   "id": "tasha",
+   "label": "Tasha",
+   "color": "#D9541A"
+  },
+  {
+   "id": "zanz",
+   "label": "Zanz",
+   "color": "#B8862B"
+  }
+ ],
+ "teams": [
+  {
+   "id": "a",
+   "name": "Raigad Sardars",
+   "short": "Team A",
+   "color": "#D9541A",
+   "target": {
+    "dhol": 9,
+    "tasha": 3
+   },
+   "transport": "Cars"
+  },
+  {
+   "id": "b",
+   "name": "Shivneri Mavla",
+   "short": "Team B",
+   "color": "#1F6F5B",
+   "target": {
+    "dhol": 10,
+    "tasha": 3
+   },
+   "transport": "Pickup truck (5 rides) + cars"
+  }
+ ],
+ "wadak": [
+  {
+   "id": "anup",
+   "name": "Anup",
+   "instrument": "tasha",
+   "team": "a",
+   "car": true,
+   "brings": {
+    "dhol": 2,
+    "tasha": 3
+   },
+   "notes": ""
+  },
+  {
+   "id": "neeraj",
+   "name": "Neeraj",
+   "instrument": "tasha",
+   "team": "a",
+   "car": true,
+   "brings": {
+    "dhol": 1
+   },
+   "notes": ""
+  },
+  {
+   "id": "jashank",
+   "name": "Jashank",
+   "instrument": "tasha",
+   "team": "a",
+   "car": true,
+   "brings": {
+    "dhol": 1
+   },
+   "notes": ""
+  },
+  {
+   "id": "jayashree",
+   "name": "Jayashree",
+   "instrument": "dhol",
+   "team": "a",
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "mayuri",
+   "name": "Mayuri",
+   "instrument": "dhol",
+   "team": "a",
+   "car": false,
+   "brings": {},
+   "notes": "20th only"
+  },
+  {
+   "id": "amit",
+   "name": "Amit",
+   "instrument": "dhol",
+   "team": "a",
+   "car": true,
+   "brings": {
+    "dhol": 2
+   },
+   "notes": ""
+  },
+  {
+   "id": "ajinkya",
+   "name": "Ajinkya",
+   "instrument": "dhol",
+   "team": "a",
+   "car": true,
+   "brings": {
+    "dhol": 1
+   },
+   "notes": ""
+  },
+  {
+   "id": "vishwak",
+   "name": "Vishwak",
+   "instrument": "dhol",
+   "team": "a",
+   "car": true,
+   "brings": {
+    "dhol": 1
+   },
+   "notes": ""
+  },
+  {
+   "id": "prachee",
+   "name": "Prachee",
+   "instrument": "dhol",
+   "team": "a",
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "riddhi",
+   "name": "Riddhi",
+   "instrument": "dhol",
+   "team": "a",
+   "car": false,
+   "brings": {},
+   "notes": "20th only"
+  },
+  {
+   "id": "nirbhay",
+   "name": "Nirbhay",
+   "instrument": "dhol",
+   "team": "a",
+   "car": true,
+   "brings": {
+    "dhol": 1
+   },
+   "notes": ""
+  },
+  {
+   "id": "danny",
+   "name": "Danny",
+   "instrument": "dhol",
+   "team": "a",
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "yogesh",
+   "name": "Yogesh",
+   "instrument": "dhol",
+   "team": "a",
+   "car": true,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "omkar",
+   "name": "Omkar",
+   "instrument": "dhol",
+   "team": "a",
+   "car": true,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "shubham-astekar",
+   "name": "Shubham Astekar",
+   "instrument": null,
+   "team": "b",
+   "car": false,
+   "brings": {
+    "dhol": 4,
+    "tasha": 3
+   },
+   "notes": "Pickup truck – 5 rides"
+  },
+  {
+   "id": "chinmay",
+   "name": "Chinmay",
+   "instrument": null,
+   "team": "b",
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "manish",
+   "name": "Manish",
+   "instrument": null,
+   "team": "b",
+   "car": true,
+   "brings": {
+    "dhol": 1
+   },
+   "notes": ""
+  },
+  {
+   "id": "sakshi",
+   "name": "Sakshi",
+   "instrument": null,
+   "team": "b",
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "manasi",
+   "name": "Manasi",
+   "instrument": null,
+   "team": "b",
+   "car": true,
+   "brings": {
+    "dhol": 1
+   },
+   "notes": ""
+  },
+  {
+   "id": "juee",
+   "name": "Juee",
+   "instrument": null,
+   "team": "b",
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "alhad",
+   "name": "Alhad",
+   "instrument": null,
+   "team": "b",
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "rohit",
+   "name": "Rohit",
+   "instrument": null,
+   "team": "b",
+   "car": true,
+   "brings": {
+    "dhol": 1
+   },
+   "notes": ""
+  },
+  {
+   "id": "pranoti",
+   "name": "Pranoti",
+   "instrument": null,
+   "team": "b",
+   "car": true,
+   "brings": {
+    "dhol": 1
+   },
+   "notes": ""
+  },
+  {
+   "id": "ashwini",
+   "name": "Ashwini",
+   "instrument": "zanz",
+   "team": "b",
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "shivani",
+   "name": "Shivani",
+   "instrument": null,
+   "team": "b",
+   "car": true,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "amol",
+   "name": "Amol",
+   "instrument": null,
+   "team": "b",
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "atul-k",
+   "name": "Atul K",
+   "instrument": null,
+   "team": "b",
+   "car": true,
+   "brings": {
+    "dhol": 1
+   },
+   "notes": ""
+  },
+  {
+   "id": "prachi",
+   "name": "Prachi",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "sanket",
+   "name": "Sanket",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "apurva",
+   "name": "Apurva",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {
+    "dhol": 1
+   },
+   "notes": "Brings 1 dhol (20th)"
+  },
+  {
+   "id": "harshada",
+   "name": "Harshada",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "aditya",
+   "name": "Aditya",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "mehul",
+   "name": "Mehul",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "ankita",
+   "name": "Ankita",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "shweta",
+   "name": "Shweta",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "kshitij",
+   "name": "Kshitij",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "ajit",
+   "name": "Ajit",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "pratham",
+   "name": "Pratham",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {},
+   "notes": ""
+  },
+  {
+   "id": "hetal",
+   "name": "Hetal",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {},
+   "notes": "20th only"
+  }
+ ],
+ "days": [
+  {
+   "date": "2026-09-19",
+   "available": [
+    "anup",
+    "jayashree",
+    "manish",
+    "jashank",
+    "amit",
+    "neeraj",
+    "sakshi",
+    "omkar",
+    "ashwini",
+    "yogesh",
+    "vishwak",
+    "mehul",
+    "riddhi",
+    "atul-k",
+    "rohit",
+    "ajinkya",
+    "manasi",
+    "pranoti",
+    "shivani",
+    "chinmay",
+    "prachee",
+    "nirbhay",
+    "shubham-astekar",
+    "ankita",
+    "shweta"
+   ]
+  },
+  {
+   "date": "2026-09-20",
+   "available": [
+    "anup",
+    "mayuri",
+    "kshitij",
+    "shweta",
+    "jayashree",
+    "jashank",
+    "amit",
+    "neeraj",
+    "sakshi",
+    "omkar",
+    "yogesh",
+    "harshada",
+    "vishwak",
+    "ajit",
+    "mehul",
+    "riddhi",
+    "ashwini",
+    "rohit",
+    "ajinkya",
+    "manasi",
+    "pranoti",
+    "apurva",
+    "shivani",
+    "chinmay",
+    "prachee",
+    "shubham-astekar",
+    "pratham",
+    "hetal"
+   ]
+  }
+ ],
+ "wadans": [
+  {
+   "id": "w19-oakville",
+   "date": "2026-09-19",
+   "time": "11:00",
+   "name": "Oakville Yuva",
+   "venue": "Oakville",
+   "teams": [
+    "a"
+   ],
+   "roster": [
+    "anup",
+    "neeraj",
+    "jashank",
+    "jayashree",
+    "amit",
+    "ajinkya",
+    "vishwak",
+    "prachee",
+    "nirbhay",
+    "danny",
+    "yogesh",
+    "omkar",
+    "pranoti",
+    "rohit"
+   ],
+   "notes": "Pranoti & Rohit join from Team B."
+  },
+  {
+   "id": "w19-sta-telugu",
+   "date": "2026-09-19",
+   "time": "16:00",
+   "name": "Scarborough Telugu Association",
+   "venue": "Scarborough",
+   "teams": [
+    "b"
+   ],
+   "roster": [
+    "shubham-astekar",
+    "chinmay",
+    "manish",
+    "sakshi",
+    "manasi",
+    "juee",
+    "alhad",
+    "rohit",
+    "pranoti",
+    "ashwini",
+    "shivani",
+    "amol",
+    "atul-k"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "w19-clarington",
+   "date": "2026-09-19",
+   "time": "16:00",
+   "name": "Clarington Cha Raja",
+   "venue": "Clarington",
+   "teams": [
+    "a"
+   ],
+   "roster": [
+    "anup",
+    "neeraj",
+    "jashank",
+    "jayashree",
+    "amit",
+    "ajinkya",
+    "vishwak",
+    "prachee",
+    "nirbhay",
+    "danny",
+    "yogesh",
+    "omkar"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "w19-brampton-a",
+   "date": "2026-09-19",
+   "time": "18:30",
+   "name": "Brampton Ganesh Utsav",
+   "venue": "Brampton",
+   "teams": [
+    "a"
+   ],
+   "roster": [
+    "anup",
+    "neeraj",
+    "jashank",
+    "jayashree",
+    "amit",
+    "ajinkya",
+    "vishwak",
+    "prachee",
+    "nirbhay",
+    "danny",
+    "yogesh",
+    "omkar"
+   ],
+   "notes": "Team A at 6:30 pm"
+  },
+  {
+   "id": "w19-brampton-b",
+   "date": "2026-09-19",
+   "time": "19:00",
+   "name": "Brampton Ganesh Utsav",
+   "venue": "Brampton",
+   "teams": [
+    "b"
+   ],
+   "roster": [
+    "shubham-astekar",
+    "chinmay",
+    "manish",
+    "sakshi",
+    "manasi",
+    "juee",
+    "alhad",
+    "rohit",
+    "pranoti",
+    "ashwini",
+    "shivani",
+    "amol",
+    "atul-k"
+   ],
+   "notes": "Team B at 7 pm"
+  },
+  {
+   "id": "w19-shivray",
+   "date": "2026-09-19",
+   "time": "19:30",
+   "name": "Shivray Pratishthan",
+   "venue": "Hindu Sabha",
+   "teams": [
+    "a",
+    "b"
+   ],
+   "roster": [
+    "ajinkya",
+    "alhad",
+    "amit",
+    "amol",
+    "anup",
+    "ashwini",
+    "atul-k",
+    "chinmay",
+    "danny",
+    "jashank",
+    "jayashree",
+    "juee",
+    "manasi",
+    "manish",
+    "neeraj",
+    "nirbhay",
+    "omkar",
+    "prachee",
+    "pranoti",
+    "rohit",
+    "sakshi",
+    "shivani",
+    "shubham-astekar",
+    "vishwak",
+    "yogesh"
+   ],
+   "notes": "Full pathak"
+  },
+  {
+   "id": "w20-milton",
+   "date": "2026-09-20",
+   "time": "13:00",
+   "name": "Milton Friends Group",
+   "venue": "Milton",
+   "teams": [
+    "a"
+   ],
+   "roster": [
+    "anup",
+    "neeraj",
+    "jashank",
+    "jayashree",
+    "amit",
+    "ajinkya",
+    "vishwak",
+    "prachee",
+    "yogesh",
+    "omkar",
+    "mayuri",
+    "riddhi",
+    "hetal",
+    "harshada",
+    "apurva",
+    "kshitij"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "w20-kitchener",
+   "date": "2026-09-20",
+   "time": "15:00",
+   "name": "Om India Kitchener",
+   "venue": "Kitchener",
+   "teams": [
+    "b"
+   ],
+   "roster": [
+    "shubham-astekar",
+    "chinmay",
+    "sakshi",
+    "manasi",
+    "rohit",
+    "pranoti",
+    "ashwini",
+    "shivani"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "w20-clarington",
+   "date": "2026-09-20",
+   "time": "16:00",
+   "name": "Clarington",
+   "venue": "Clarington",
+   "teams": [
+    "a"
+   ],
+   "roster": [
+    "anup",
+    "neeraj",
+    "jashank",
+    "jayashree",
+    "amit",
+    "ajinkya",
+    "vishwak",
+    "prachee",
+    "yogesh",
+    "omkar",
+    "mayuri",
+    "riddhi",
+    "hetal",
+    "harshada",
+    "apurva",
+    "kshitij"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "w20-mississauga",
+   "date": "2026-09-20",
+   "time": "17:30",
+   "name": "Mississauga",
+   "venue": "Mississauga",
+   "teams": [
+    "b"
+   ],
+   "roster": [
+    "shubham-astekar",
+    "chinmay",
+    "sakshi",
+    "manasi",
+    "rohit",
+    "pranoti",
+    "ashwini",
+    "shivani",
+    "pratham"
+   ],
+   "notes": "5 dhol, 2 tasha"
+  },
+  {
+   "id": "w20-shivray",
+   "date": "2026-09-20",
+   "time": "19:30",
+   "name": "Shivray Pratishthan",
+   "venue": "Hindu Sabha",
+   "teams": [
+    "a",
+    "b"
+   ],
+   "roster": [
+    "ajinkya",
+    "amit",
+    "anup",
+    "apurva",
+    "ashwini",
+    "chinmay",
+    "harshada",
+    "hetal",
+    "jashank",
+    "jayashree",
+    "kshitij",
+    "manasi",
+    "mayuri",
+    "neeraj",
+    "omkar",
+    "prachee",
+    "pranoti",
+    "riddhi",
+    "rohit",
+    "sakshi",
+    "shivani",
+    "shubham-astekar",
+    "vishwak",
+    "yogesh"
+   ],
+   "notes": "Full pathak"
+  }
+ ]
+}
