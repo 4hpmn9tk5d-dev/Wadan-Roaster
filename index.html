@@ -21,14 +21,20 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=202609182247">
 </head>
 <body>
   <div id="app"></div>
-  <script src="app.js"></script>
+  <script src="app.js?v=202609182247"></script>
   <script>
+    // One-time cleanup: unregister the old caching service worker (it was making
+    // updates slow to show up) and clear anything it cached. Safe to run on every
+    // visit — becomes a no-op once nothing is registered.
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+      navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+    }
+    if (window.caches) {
+      caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
     }
   </script>
 </body>
