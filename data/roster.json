@@ -218,7 +218,7 @@
    "team": "b",
    "car": true,
    "brings": {
-    "dhol": 1
+    "dhol": 2
    },
    "notes": ""
   },
@@ -429,6 +429,15 @@
    "car": false,
    "brings": {},
    "notes": "20th only"
+  },
+  {
+   "id": "pallavi",
+   "name": "Pallavi",
+   "instrument": null,
+   "team": null,
+   "car": false,
+   "brings": {},
+   "notes": ""
   }
  ],
  "days": [
@@ -494,9 +503,56 @@
     "pratham",
     "hetal"
    ]
+  },
+  {
+   "date": "2026-09-18",
+   "available": [
+    "rohit",
+    "jashank",
+    "atul-k",
+    "ashwini",
+    "pranoti",
+    "omkar",
+    "juee",
+    "pallavi",
+    "manish",
+    "sakshi",
+    "manasi",
+    "vishwak",
+    "shweta",
+    "jayashree",
+    "alhad"
+   ]
   }
  ],
  "wadans": [
+  {
+   "id": "w18-hindusabha",
+   "date": "2026-09-18",
+   "time": "19:00",
+   "name": "Hindu Sabha Temple",
+   "venue": "Hindu Sabha Mandir",
+   "address": "Hindu Sabha Mandir, Brampton, ON",
+   "teams": [],
+   "roster": [
+    "rohit",
+    "jashank",
+    "atul-k",
+    "ashwini",
+    "pranoti",
+    "omkar",
+    "juee",
+    "pallavi",
+    "manish",
+    "sakshi",
+    "manasi",
+    "vishwak",
+    "shweta",
+    "jayashree",
+    "alhad"
+   ],
+   "notes": "Rohit: tentative. Manasi: 1 dhol unconfirmed."
+  },
   {
    "id": "w19-oakville",
    "date": "2026-09-19",
