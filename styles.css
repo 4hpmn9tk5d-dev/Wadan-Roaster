@@ -253,3 +253,5 @@ textarea.inp { min-height: 180px; font-family: 'Courier New', monospace; font-si
 .dress-band { display: flex; align-items: center; gap: 10px; background: var(--maroon); color: #FFF3DC; }
 .dress-band .icn { width: 20px; height: 20px; flex-shrink: 0; }
 .dress-band b { color: var(--gold-2); }
+
+.remind-pill { background: var(--gold); border-color: var(--gold); color: #FFF3DC; font-weight: 700; }

@@ -14,6 +14,26 @@ const fmtTime = t => { if (!t) return {h: '—', ap: ''}; const [H, M] = t.split
 const fmtDate = d => { const dt = new Date(d + 'T12:00:00'); return dt.toLocaleDateString('en-CA', {weekday: 'short', day: 'numeric', month: 'short'}); };
 const shortDate = d => new Date(d + 'T12:00:00').toLocaleDateString('en-CA', {weekday: 'short', day: 'numeric'});
 const mapsUrl = addr => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr);
+// ---------- calendar reminders (Eastern = UTC-4 for these fixed Sept dates) ----------
+const icsEscape = s => String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+function foldICS(line) { if (line.length <= 74) return line; let out = line.slice(0, 74), rest = line.slice(74); while (rest.length) { out += '\r\n ' + rest.slice(0, 73); rest = rest.slice(73); } return out; }
+function icsUTC(date, time) { const [Y, M, D] = date.split('-').map(Number); const [h, m] = (time || '00:00').split(':').map(Number); const dt = new Date(Date.UTC(Y, M - 1, D, h + 4, m, 0)); const p = n => String(n).padStart(2, '0'); return `${dt.getUTCFullYear()}${p(dt.getUTCMonth() + 1)}${p(dt.getUTCDate())}T${p(dt.getUTCHours())}${p(dt.getUTCMinutes())}00Z`; }
+function icsNow() { const d = new Date(); const p = n => String(n).padStart(2, '0'); return `${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}T${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}Z`; }
+function addMinutes(time, mins) { let [h, m] = (time || '00:00').split(':').map(Number); m += mins; h = (h + Math.floor(m / 60)) % 24; m = ((m % 60) + 60) % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`; }
+function reminderDetails(w) { return [w.notes, db.meta.dressCode ? `Dress code: ${db.meta.dressCode}` : '', (w.teams || []).map(id => teamOf(id)?.name).filter(Boolean).join(' + ')].filter(Boolean).join('\n'); }
+function gcalUrl(w) { const s = icsUTC(w.date, w.time), e = icsUTC(w.date, addMinutes(w.time, 60)); const p = new URLSearchParams({action: 'TEMPLATE', text: w.name, dates: `${s}/${e}`, details: reminderDetails(w), location: w.address || w.venue || ''}); return 'https://calendar.google.com/calendar/render?' + p.toString(); }
+function icsEvent(w) {
+  const lines = ['BEGIN:VEVENT', 'UID:' + w.id + '@wadan-roster', 'DTSTAMP:' + icsNow(), 'DTSTART:' + icsUTC(w.date, w.time), 'DTEND:' + icsUTC(w.date, addMinutes(w.time, 60)), 'SUMMARY:' + icsEscape(w.name)];
+  const loc = w.address || w.venue; if (loc) lines.push('LOCATION:' + icsEscape(loc));
+  const desc = reminderDetails(w); if (desc) lines.push('DESCRIPTION:' + icsEscape(desc));
+  lines.push('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Reminder', 'TRIGGER:-PT1H', 'END:VALARM');
+  lines.push('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Prepare — dress code and instrument', 'TRIGGER:-P1D', 'END:VALARM');
+  lines.push('END:VEVENT');
+  return lines.map(foldICS).join('\r\n');
+}
+function icsBundle(list) { return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Wadan Roster//EN', 'CALSCALE:GREGORIAN', ...list.map(icsEvent), 'END:VCALENDAR'].join('\r\n'); }
+function downloadICS(content, filename) { const blob = new Blob([content], {type: 'text/calendar;charset=utf-8'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+
 const ago = iso => { if (!iso) return ''; const s = (Date.now() - new Date(iso)) / 1000; if (s < 60) return 'just now'; if (s < 3600) return Math.round(s / 60) + ' min ago'; if (s < 86400) return Math.round(s / 3600) + ' h ago'; return Math.round(s / 86400) + ' d ago'; };
 const I = {
   dhol: '<svg class="icn" viewBox="0 0 24 24"><path d="M6 6.5C6 5.5 7.5 4.5 12 4.5S18 5.5 18 6.5V17.5C18 18.5 16.5 19.5 12 19.5S6 18.5 6 17.5Z"/><ellipse cx="12" cy="6.5" rx="6" ry="2"/></svg>',
@@ -21,6 +41,8 @@ const I = {
   zanz: '<svg class="icn" viewBox="0 0 24 24"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>',
   car: '<svg class="icn" viewBox="0 0 24 24"><path d="M5 16l1.5-5h11L19 16"/><rect x="3" y="16" width="18" height="4" rx="1"/><circle cx="7.5" cy="20" r="1.5"/><circle cx="16.5" cy="20" r="1.5"/></svg>',
   nav: '<svg class="icn" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg>',
+  bell: '<svg class="icn" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 3 1 4 2 5H4c1-1 2-2 2-5z"/><path d="M9 18a3 3 0 0 0 6 0"/></svg>',
+  dl: '<svg class="icn" viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5"/><path d="M4 20h16"/></svg>',
   search: '<svg class="icn" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
   up: '<svg class="icn" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg>',
   down: '<svg class="icn" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>',
@@ -289,6 +311,7 @@ function wadanCard(w, q) {
         ${db.instruments.map(i => `<span class="pill ${i.id}">${I[i.id] || ''}${c[i.id]} ${esc(i.label)}</span>`).join('')}
         ${c.none ? `<span class="pill none">${c.none} unassigned</span>` : ''}
         ${w.address ? `<a class="pill nav-pill" href="${mapsUrl(w.address)}" target="_blank" rel="noopener">${I.nav}Navigate</a>` : ''}
+        <button class="pill remind-pill" data-act="remindWadan" data-id="${w.id}">${I.bell}Remind me</button>
         ${open ? `<span class="pill">${I.car}${cars} car${cars === 1 ? '' : 's'}${brought ? ` · ${brought} instruments carried` : ''}</span>` : ''}
       </div>
       ${open ? `<div class="roster">${groups.map(g => `<div ${g.key === 'dhol' ? 'style="grid-column:span 2"' : ''}><div class="lbl">${esc(g.label)} <span style="color:var(--ink-3);font-weight:500;letter-spacing:0;text-transform:none">· ${g.ids.length}</span></div><div class="chips">${g.ids.map(id => personPill(id, w)).join('')}</div></div>`).join('') || '<div class="muted">No one on this roster yet — tap the pencil to add wadak.</div>'}</div>
@@ -550,7 +573,8 @@ function renderMe() {
     <div class="field" style="flex-grow:1;min-width:220px"><label>Who are you?</label><input class="inp" id="meName" list="meNames" value="${esc(name)}" placeholder="Start typing your name…" autocomplete="off"><datalist id="meNames">${db.wadak.map(p => `<option value="${esc(p.name)}">`).join('')}</datalist></div>
     <button class="btn pri" data-act="setMe">Show my day</button>
   </div>`;
-  if (!w) return `<div class="body wide"><div class="col">${picker}${name ? `<div class="card empty"><h3>No wadak called "${esc(name)}"</h3><p>Pick a name from the list, or add yourself in the Wadak directory.</p></div>` : `<div class="card empty"><h3>${esc(db.meta.tagline || '')}</h3><p>Enter your name to see every wadan you're in, what you play, and how you get between them.</p></div>`}</div></div>`;
+  const dressBand = db.meta.dressCode ? `<div class="card pad dress-band">${I.shirt}<span><b>Dress code</b> — ${esc(db.meta.dressCode)}</span></div>` : '';
+  if (!w) return `<div class="body wide"><div class="col">${picker}${dressBand}${name ? `<div class="card empty"><h3>No wadak called "${esc(name)}"</h3><p>Pick a name from the list, or add yourself in the Wadak directory.</p></div>` : `<div class="card empty"><h3>${esc(db.meta.tagline || '')}</h3><p>Enter your name to see every wadan you're in, what you play, and how you get between them.</p></div>`}</div></div>`;
   const plan = myPlan(w.id);
   const ins = insOf(w.instrument);
   const team = teamOf(w.team);
@@ -569,11 +593,13 @@ function renderMe() {
         <div class="my-node"><span class="my-num">${i + 1}</span></div>
         <div class="my-body">
           <div class="my-time">${t.h} <small>${t.ap}</small></div>
-          <h3>${esc(s.name)}</h3>${s.venue ? `<div class="muted">${I.pin}${esc(s.venue)}</div>` : ''}${s.address ? `<a class="my-nav" href="${mapsUrl(s.address)}" target="_blank" rel="noopener">${I.nav}${esc(s.address)}</a>` : ''}
+          <h3>${esc(s.name)}</h3>${s.venue ? `<div class="muted">${I.pin}${esc(s.venue)}${s.address ? ' · ' + esc(s.address) : ''}</div>` : (s.address ? `<div class="muted">${I.pin}${esc(s.address)}</div>` : '')}
           <div class="chips" style="margin-top:8px">
             <span class="pill ${w.instrument || 'none'}">${I[w.instrument] || ''}You on ${esc(ins?.label || 'instrument not set')}${others ? ` <small>with ${others} other${others > 1 ? 's' : ''}</small>` : ''}</span>
             ${s.teams.map(id => teamOf(id)).filter(Boolean).map(teamPill).join('')}
             <span class="pill">${db.instruments.map(i => `${c[i.id]}${i.label[0]}`).join(' · ')} · ${s.roster.length} wadak</span>
+            ${s.address ? `<a class="pill nav-pill" href="${mapsUrl(s.address)}" target="_blank" rel="noopener">${I.nav}Navigate</a>` : ''}
+            <button class="pill remind-pill" data-act="remindWadan" data-id="${s.id}">${I.bell}Remind me</button>
           </div>
           ${s.notes ? `<div class="muted" style="margin-top:6px">${I.info}${esc(s.notes)}</div>` : ''}
         </div></div>`);
@@ -592,22 +618,33 @@ function renderMe() {
     </section>`;
   }).join('');
   return `<div class="body">
-    <div class="col">${picker}${dayBlocks || '<div class="card empty"><h3>You are not on any wadan yet</h3><p>Ask the organiser, or add yourself from a wadan\'s pencil.</p></div>'}</div>
+    <div class="col">${picker}${dressBand}${dayBlocks || '<div class="card empty"><h3>You are not on any wadan yet</h3><p>Ask the organiser, or add yourself from a wadan\'s pencil.</p></div>'}</div>
     <div class="col rail">
       <div class="card pad my-sum" style="display:flex;flex-direction:column;gap:10px">
         <div class="lbl">Your summary</div>
         <div class="disp" style="font-size:28px;line-height:1.1">${esc(w.name)}</div>
         <div class="chips"><span class="pill ${w.instrument || 'none'}">${I[w.instrument] || ''}${esc(ins?.label || 'Instrument not set')}</span>${team ? teamPill(team) : '<span class="pill">No team</span>'}${w.car ? `<span class="pill">${I.car}Driving</span>` : `<span class="pill warn">${I.car}Needs rides</span>`}</div>
         <div class="glance"><div style="background:var(--maroon)"><b>${total}</b><span>wadans</span></div><div style="background:var(--kesari)"><b>${plan.days.filter(d => d.stops.length).length}</b><span>days</span></div><div style="background:var(--gold)"><b>${plan.days.reduce((n, d) => n + d.legs.filter(l => !l.same).length, 0)}</b><span>trips</span></div></div>
-        ${db.meta.dressCode ? `<div class="muted">${I.shirt}${esc(db.meta.dressCode)}</div>` : ''}
         ${brings ? `<div class="muted">${I.info}You bring ${esc(brings)}.</div>` : ''}
         ${w.notes ? `<div class="muted">${I.info}${esc(w.notes)}</div>` : ''}
         <div class="muted" style="white-space:pre-line;border-top:1px dashed var(--line);padding-top:10px">${esc(mySummaryText(plan, true))}</div>
+        <button class="btn dark" data-act="remindAllMe">${I.bell}Add all my wadans to calendar</button>
         <button class="btn pri" data-act="copyMe">Copy my summary</button>
       </div>
       <div class="tagline">${esc(db.meta.tagline || '')}</div>
     </div>
   </div>`;
+}
+function reminderModal(id) {
+  const w = byId(db.wadans, id); if (!w) return;
+  const t = fmtTime(w.time);
+  modal(`Remind me — ${esc(w.name)}`, `
+    <p class="muted" style="margin:0">${esc(fmtDate(w.date))} at ${t.h} ${t.ap}${w.venue ? ' · ' + esc(w.venue) : ''}. Adds a reminder the day before (pack instrument, wear the dress code) and an hour before.</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <a class="btn pri" href="${gcalUrl(w)}" target="_blank" rel="noopener" data-act="closeModal">${I.cal}Add to Google Calendar</a>
+      <button class="btn" data-act="downloadIcsOne" data-id="${w.id}">${I.dl}Download .ics <span style="font-weight:500;color:var(--ink-3)">— Apple Calendar, Outlook</span></button>
+    </div>`,
+    `<button class="btn" data-act="closeModal">Close</button>`);
 }
 function mySummaryText(plan, short) {
   const w = plan.w; const lines = [];
@@ -686,6 +723,9 @@ document.addEventListener('click', e => {
     case 'clearLocal': if (confirm('Throw away local unsaved changes and reload?')) { localStorage.removeItem(LS.db); location.reload(); } break;
     case 'setMe': settings.me = $('#meName').value.trim(); localStorage.setItem(LS.settings, JSON.stringify(settings)); render(); break;
     case 'copyMe': { const w = db.wadak.find(x => x.name.toLowerCase() === (settings.me || '').toLowerCase()); if (w) navigator.clipboard.writeText(mySummaryText(myPlan(w.id), false)).then(() => toast('Copied — paste it into WhatsApp'), () => toast('Could not copy')); break; }
+    case 'remindWadan': reminderModal(id); break;
+    case 'downloadIcsOne': { const w = byId(db.wadans, id); if (w) { downloadICS(icsBundle([w]), slug(w.name) + '-reminder.ics'); toast('Downloaded — open it to add to your calendar'); } closeModal(); break; }
+    case 'remindAllMe': { const wk = db.wadak.find(x => x.name.toLowerCase() === (settings.me || '').toLowerCase()); if (!wk) return toast('Set your name first'); const stops = myPlan(wk.id).days.flatMap(d => d.stops); if (!stops.length) return toast('No wadans to remind you about yet'); downloadICS(icsBundle(stops), slug(wk.name) + '-wadan-reminders.ics'); toast('Downloaded — open it to add all your wadans to your calendar'); break; }
     case 'copyDay': navigator.clipboard.writeText(daySummary(ui.date)).then(() => toast('Copied — paste it into WhatsApp'), () => toast('Could not copy')); break;
     case 'print': window.print(); break;
     case 'settings': settingsModal(); break;
