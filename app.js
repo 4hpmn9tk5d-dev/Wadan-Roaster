@@ -550,7 +550,8 @@ function renderMe() {
     <div class="field" style="flex-grow:1;min-width:220px"><label>Who are you?</label><input class="inp" id="meName" list="meNames" value="${esc(name)}" placeholder="Start typing your name…" autocomplete="off"><datalist id="meNames">${db.wadak.map(p => `<option value="${esc(p.name)}">`).join('')}</datalist></div>
     <button class="btn pri" data-act="setMe">Show my day</button>
   </div>`;
-  if (!w) return `<div class="body wide"><div class="col">${picker}${name ? `<div class="card empty"><h3>No wadak called "${esc(name)}"</h3><p>Pick a name from the list, or add yourself in the Wadak directory.</p></div>` : `<div class="card empty"><h3>${esc(db.meta.tagline || '')}</h3><p>Enter your name to see every wadan you're in, what you play, and how you get between them.</p></div>`}</div></div>`;
+  const dressBand = db.meta.dressCode ? `<div class="card pad dress-band">${I.shirt}<span><b>Dress code</b> — ${esc(db.meta.dressCode)}</span></div>` : '';
+  if (!w) return `<div class="body wide"><div class="col">${picker}${dressBand}${name ? `<div class="card empty"><h3>No wadak called "${esc(name)}"</h3><p>Pick a name from the list, or add yourself in the Wadak directory.</p></div>` : `<div class="card empty"><h3>${esc(db.meta.tagline || '')}</h3><p>Enter your name to see every wadan you're in, what you play, and how you get between them.</p></div>`}</div></div>`;
   const plan = myPlan(w.id);
   const ins = insOf(w.instrument);
   const team = teamOf(w.team);
@@ -569,11 +570,12 @@ function renderMe() {
         <div class="my-node"><span class="my-num">${i + 1}</span></div>
         <div class="my-body">
           <div class="my-time">${t.h} <small>${t.ap}</small></div>
-          <h3>${esc(s.name)}</h3>${s.venue ? `<div class="muted">${I.pin}${esc(s.venue)}</div>` : ''}${s.address ? `<a class="my-nav" href="${mapsUrl(s.address)}" target="_blank" rel="noopener">${I.nav}${esc(s.address)}</a>` : ''}
+          <h3>${esc(s.name)}</h3>${s.venue ? `<div class="muted">${I.pin}${esc(s.venue)}${s.address ? ' · ' + esc(s.address) : ''}</div>` : (s.address ? `<div class="muted">${I.pin}${esc(s.address)}</div>` : '')}
           <div class="chips" style="margin-top:8px">
             <span class="pill ${w.instrument || 'none'}">${I[w.instrument] || ''}You on ${esc(ins?.label || 'instrument not set')}${others ? ` <small>with ${others} other${others > 1 ? 's' : ''}</small>` : ''}</span>
             ${s.teams.map(id => teamOf(id)).filter(Boolean).map(teamPill).join('')}
             <span class="pill">${db.instruments.map(i => `${c[i.id]}${i.label[0]}`).join(' · ')} · ${s.roster.length} wadak</span>
+            ${s.address ? `<a class="pill nav-pill" href="${mapsUrl(s.address)}" target="_blank" rel="noopener">${I.nav}Navigate</a>` : ''}
           </div>
           ${s.notes ? `<div class="muted" style="margin-top:6px">${I.info}${esc(s.notes)}</div>` : ''}
         </div></div>`);
@@ -592,14 +594,13 @@ function renderMe() {
     </section>`;
   }).join('');
   return `<div class="body">
-    <div class="col">${picker}${dayBlocks || '<div class="card empty"><h3>You are not on any wadan yet</h3><p>Ask the organiser, or add yourself from a wadan\'s pencil.</p></div>'}</div>
+    <div class="col">${picker}${dressBand}${dayBlocks || '<div class="card empty"><h3>You are not on any wadan yet</h3><p>Ask the organiser, or add yourself from a wadan\'s pencil.</p></div>'}</div>
     <div class="col rail">
       <div class="card pad my-sum" style="display:flex;flex-direction:column;gap:10px">
         <div class="lbl">Your summary</div>
         <div class="disp" style="font-size:28px;line-height:1.1">${esc(w.name)}</div>
         <div class="chips"><span class="pill ${w.instrument || 'none'}">${I[w.instrument] || ''}${esc(ins?.label || 'Instrument not set')}</span>${team ? teamPill(team) : '<span class="pill">No team</span>'}${w.car ? `<span class="pill">${I.car}Driving</span>` : `<span class="pill warn">${I.car}Needs rides</span>`}</div>
         <div class="glance"><div style="background:var(--maroon)"><b>${total}</b><span>wadans</span></div><div style="background:var(--kesari)"><b>${plan.days.filter(d => d.stops.length).length}</b><span>days</span></div><div style="background:var(--gold)"><b>${plan.days.reduce((n, d) => n + d.legs.filter(l => !l.same).length, 0)}</b><span>trips</span></div></div>
-        ${db.meta.dressCode ? `<div class="muted">${I.shirt}${esc(db.meta.dressCode)}</div>` : ''}
         ${brings ? `<div class="muted">${I.info}You bring ${esc(brings)}.</div>` : ''}
         ${w.notes ? `<div class="muted">${I.info}${esc(w.notes)}</div>` : ''}
         <div class="muted" style="white-space:pre-line;border-top:1px dashed var(--line);padding-top:10px">${esc(mySummaryText(plan, true))}</div>
