@@ -13,12 +13,14 @@ const byId = (arr, id) => arr.find(x => x.id === id);
 const fmtTime = t => { if (!t) return {h: '—', ap: ''}; const [H, M] = t.split(':').map(Number); const ap = H >= 12 ? 'PM' : 'AM'; const h = ((H + 11) % 12) + 1; return {h: `${h}:${String(M || 0).padStart(2, '0')}`, ap}; };
 const fmtDate = d => { const dt = new Date(d + 'T12:00:00'); return dt.toLocaleDateString('en-CA', {weekday: 'short', day: 'numeric', month: 'short'}); };
 const shortDate = d => new Date(d + 'T12:00:00').toLocaleDateString('en-CA', {weekday: 'short', day: 'numeric'});
+const mapsUrl = addr => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr);
 const ago = iso => { if (!iso) return ''; const s = (Date.now() - new Date(iso)) / 1000; if (s < 60) return 'just now'; if (s < 3600) return Math.round(s / 60) + ' min ago'; if (s < 86400) return Math.round(s / 3600) + ' h ago'; return Math.round(s / 86400) + ' d ago'; };
 const I = {
   dhol: '<svg class="icn" viewBox="0 0 24 24"><path d="M6 6.5C6 5.5 7.5 4.5 12 4.5S18 5.5 18 6.5V17.5C18 18.5 16.5 19.5 12 19.5S6 18.5 6 17.5Z"/><ellipse cx="12" cy="6.5" rx="6" ry="2"/></svg>',
   tasha: '<svg class="icn" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>',
   zanz: '<svg class="icn" viewBox="0 0 24 24"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>',
   car: '<svg class="icn" viewBox="0 0 24 24"><path d="M5 16l1.5-5h11L19 16"/><rect x="3" y="16" width="18" height="4" rx="1"/><circle cx="7.5" cy="20" r="1.5"/><circle cx="16.5" cy="20" r="1.5"/></svg>',
+  nav: '<svg class="icn" viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg>',
   search: '<svg class="icn" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
   up: '<svg class="icn" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg>',
   down: '<svg class="icn" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>',
@@ -33,6 +35,7 @@ const I = {
   x: '<svg class="icn" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
   route: '<svg class="icn" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8 17c4 0 4-10 8-10"/></svg>',
   pin: '<svg class="icn" viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>',
+  shirt: '<svg class="icn" viewBox="0 0 24 24"><path d="M8 4l4 2 4-2 3 3-2.5 2.5V20H7V9.5L4.5 7z"/></svg>',
   truck: '<svg class="icn" viewBox="0 0 24 24"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="1.5"/><circle cx="17" cy="18" r="1.5"/></svg>',
 };
 
@@ -134,7 +137,7 @@ async function load() {
 function normalize() {
   db.meta ||= {}; db.instruments ||= []; db.teams ||= []; db.wadak ||= []; db.days ||= []; db.wadans ||= [];
   db.wadak.forEach(w => { w.brings ||= {}; w.notes ||= ''; w.car = !!w.car; });
-  db.wadans.forEach(w => { w.teams ||= []; w.roster ||= []; w.notes ||= ''; w.venue ||= ''; });
+  db.wadans.forEach(w => { w.teams ||= []; w.roster ||= []; w.notes ||= ''; w.venue ||= ''; w.address ||= ''; });
 }
 function pickDefaultDate() { const ds = dates(); const today = new Date().toISOString().slice(0, 10); return ds.find(d => d >= today) || ds[ds.length - 1] || today; }
 
@@ -236,6 +239,7 @@ function renderDay() {
   </div>
   <div class="body">
     <div class="col">
+      ${db.meta.dressCode ? `<div class="card pad dress-band">${I.shirt}<span><b>Dress code</b> — ${esc(db.meta.dressCode)}</span></div>` : ''}
       ${cards || `<div class="card empty"><h3>${ws.length ? 'Nothing matches the filter' : 'No wadans on ' + esc(fmtDate(date)) + ' yet'}</h3><p>${ws.length ? 'Clear the search or team filter.' : 'Add one with the button above, or import a sheet.'}</p></div>`}
       ${hidden ? `<div class="muted" style="text-align:center">${hidden} wadan${hidden > 1 ? 's' : ''} hidden by filters · <a href="#" data-act="clearFilters">show all</a></div>` : ''}
     </div>
@@ -274,7 +278,7 @@ function wadanCard(w, q) {
     <div class="wadan-time"><b>${t.h}</b><span>${t.ap}</span></div>
     <div class="wadan-main">
       <div class="wadan-head">
-        <div><h3>${esc(w.name)}</h3>${w.venue ? `<div class="venue">${esc(w.venue)}</div>` : ''}</div>
+        <div><h3>${esc(w.name)}</h3>${w.venue ? `<div class="venue">${esc(w.venue)}</div>` : ''}${w.address ? `<div class="venue-addr">${I.pin}${esc(w.address)}</div>` : ''}</div>
         <div class="wadan-acts">
           <button class="iconbtn" data-act="editWadan" data-id="${w.id}" aria-label="Edit ${esc(w.name)}">${I.edit}</button>
           <button class="iconbtn" data-act="toggle" data-id="${w.id}" aria-label="${open ? 'Collapse' : 'Expand'}">${open ? I.up : I.down}</button>
@@ -284,6 +288,7 @@ function wadanCard(w, q) {
         ${w.teams.map(id => teamOf(id)).filter(Boolean).map(teamPill).join('')}${!w.teams.length ? '<span class="pill">Whoever is available</span>' : ''}
         ${db.instruments.map(i => `<span class="pill ${i.id}">${I[i.id] || ''}${c[i.id]} ${esc(i.label)}</span>`).join('')}
         ${c.none ? `<span class="pill none">${c.none} unassigned</span>` : ''}
+        ${w.address ? `<a class="pill nav-pill" href="${mapsUrl(w.address)}" target="_blank" rel="noopener">${I.nav}Navigate</a>` : ''}
         ${open ? `<span class="pill">${I.car}${cars} car${cars === 1 ? '' : 's'}${brought ? ` · ${brought} instruments carried` : ''}</span>` : ''}
       </div>
       ${open ? `<div class="roster">${groups.map(g => `<div ${g.key === 'dhol' ? 'style="grid-column:span 2"' : ''}><div class="lbl">${esc(g.label)} <span style="color:var(--ink-3);font-weight:500;letter-spacing:0;text-transform:none">· ${g.ids.length}</span></div><div class="chips">${g.ids.map(id => personPill(id, w)).join('')}</div></div>`).join('') || '<div class="muted">No one on this roster yet — tap the pencil to add wadak.</div>'}</div>
@@ -457,10 +462,11 @@ function editWadanModal(id) {
   modal(id ? 'Edit wadan' : 'New wadan', `
     <div class="grid2">
       <div class="field"><label>Name</label><input class="inp" id="wName" value="${esc(w.name)}" placeholder="Oakville Yuva"></div>
-      <div class="field"><label>Venue / address</label><input class="inp" id="wVenue" value="${esc(w.venue)}"></div>
+      <div class="field"><label>Venue name</label><input class="inp" id="wVenue" value="${esc(w.venue)}" placeholder="e.g. Hindu Sabha Mandir"></div>
       <div class="field"><label>Date</label><input class="inp" type="date" id="wDate" value="${esc(w.date)}"></div>
       <div class="field"><label>Time</label><input class="inp" type="time" id="wTime" value="${esc(w.time)}"></div>
     </div>
+    <div class="field"><label>Address <span style="font-weight:500;color:var(--ink-3)">— used for the Navigate / Google Maps link</span></label><input class="inp" id="wAddress" value="${esc(w.address || '')}" placeholder="e.g. 123 Main St, Brampton, ON"></div>
     <div class="field"><label>Teams performing</label><div class="chips">${db.teams.map(t => `<label class="pill btn-pill"><input type="checkbox" class="wTeam" value="${t.id}" ${w.teams.includes(t.id) ? 'checked' : ''}><span class="tdot" style="background:${t.color}"></span>${esc(t.name)}</label>`).join('')}</div></div>
     <div class="field"><label>Notes</label><input class="inp" id="wNotes" value="${esc(w.notes)}" placeholder="e.g. Team A at 6:30, Team B at 7:00"></div>
     <div class="field"><label>Roster (${w.roster.length} selected) <span style="font-weight:500;color:var(--ink-3)">— faded names aren't on the availability list for this day</span></label>
@@ -472,7 +478,7 @@ function editWadanModal(id) {
 function saveWadan(id) {
   const name = $('#wName').value.trim(); if (!name) return toast('Give the wadan a name');
   const w = id ? byId(db.wadans, id) : (() => { const n = {id: uid('w')}; db.wadans.push(n); return n; })();
-  Object.assign(w, {name, venue: $('#wVenue').value.trim(), date: $('#wDate').value || ui.date, time: $('#wTime').value, notes: $('#wNotes').value.trim(),
+  Object.assign(w, {name, venue: $('#wVenue').value.trim(), address: $('#wAddress').value.trim(), date: $('#wDate').value || ui.date, time: $('#wTime').value, notes: $('#wNotes').value.trim(),
     teams: [...document.querySelectorAll('.wTeam:checked')].map(x => x.value), roster: [...document.querySelectorAll('.wRoster:checked')].map(x => x.value)});
   ui.date = w.date; ui.view = 'days'; closeModal(); markDirty();
 }
@@ -503,6 +509,7 @@ function wadakModal(id) {
 function settingsModal() {
   modal('You & GitHub sync', `
     <div class="field"><label>Your name (as it appears in the roster)</label><input class="inp" id="sMe" list="names" value="${esc(settings.me || '')}" placeholder="Yogesh"><datalist id="names">${db.wadak.map(w => `<option value="${esc(w.name)}">`).join('')}</datalist></div>
+    <div class="field"><label>Dress code <span style="font-weight:500;color:var(--ink-3)">— shown on Days, My day and WhatsApp summaries</span></label><input class="inp" id="sDress" value="${esc(db.meta.dressCode || '')}" placeholder="e.g. Red kurta & pyjama, all events"></div>
     <p class="muted" style="margin:0">Edits are written straight to <code>data/roster.json</code> in your repo. Last write wins. Create a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">fine-grained token</a> for just this repo with <b>Contents: Read and write</b>. It stays in this browser only.</p>
     <div class="grid2">
       <div class="field"><label>Repo owner</label><input class="inp" id="sOwner" value="${esc(settings.owner || '')}" placeholder="yogesh"></div>
@@ -562,7 +569,7 @@ function renderMe() {
         <div class="my-node"><span class="my-num">${i + 1}</span></div>
         <div class="my-body">
           <div class="my-time">${t.h} <small>${t.ap}</small></div>
-          <h3>${esc(s.name)}</h3>${s.venue ? `<div class="muted">${I.pin}${esc(s.venue)}</div>` : ''}
+          <h3>${esc(s.name)}</h3>${s.venue ? `<div class="muted">${I.pin}${esc(s.venue)}</div>` : ''}${s.address ? `<a class="my-nav" href="${mapsUrl(s.address)}" target="_blank" rel="noopener">${I.nav}${esc(s.address)}</a>` : ''}
           <div class="chips" style="margin-top:8px">
             <span class="pill ${w.instrument || 'none'}">${I[w.instrument] || ''}You on ${esc(ins?.label || 'instrument not set')}${others ? ` <small>with ${others} other${others > 1 ? 's' : ''}</small>` : ''}</span>
             ${s.teams.map(id => teamOf(id)).filter(Boolean).map(teamPill).join('')}
@@ -572,9 +579,10 @@ function renderMe() {
         </div></div>`);
       const leg = d.legs[i]; if (!leg) return;
       let text, cls = '';
+      const dest = leg.to.address ? `<a href="${mapsUrl(leg.to.address)}" target="_blank" rel="noopener">${esc(leg.to.venue || leg.to.name)}</a>` : esc(leg.to.venue || leg.to.name);
       if (leg.same) text = `Stay put — next set is here${leg.gap != null ? ' in ' + fmtGap(leg.gap) : ''}`;
       else if (leg.gap != null && leg.gap <= 0) { text = `Same start time as the next wadan — you can't be at both`; cls = 'bad'; }
-      else { text = `${w.car ? 'Drive' : 'Travel'} to ${esc(leg.to.venue || leg.to.name)}${leg.gap != null ? ` · ${fmtGap(leg.gap)} between start times` : ''}`; if (leg.gap != null && leg.gap < 90) cls = 'tight'; }
+      else { text = `${w.car ? 'Drive' : 'Travel'} to ${dest}${leg.gap != null ? ` · ${fmtGap(leg.gap)} between start times` : ''}`; if (leg.gap != null && leg.gap < 90) cls = 'tight'; }
       const ride = !w.car && !leg.same ? (leg.drivers.length ? `Ride with ${esc(leg.drivers.slice(0, 3).join(', '))}${leg.drivers.length > 3 ? ' or ' + (leg.drivers.length - 3) + ' others' : ''} — they're on both` : 'No one with a car is on both wadans — arrange a ride') : '';
       items.push(`<div class="my-leg ${cls}" style="animation-delay:${k++ * .35}s"><div class="my-road"><span class="my-car">${I[w.car ? 'car' : 'route']}</span></div><div class="my-legtxt"><b>${text}</b>${ride ? `<div class="muted">${ride}</div>` : ''}</div></div>`);
     });
@@ -591,6 +599,7 @@ function renderMe() {
         <div class="disp" style="font-size:28px;line-height:1.1">${esc(w.name)}</div>
         <div class="chips"><span class="pill ${w.instrument || 'none'}">${I[w.instrument] || ''}${esc(ins?.label || 'Instrument not set')}</span>${team ? teamPill(team) : '<span class="pill">No team</span>'}${w.car ? `<span class="pill">${I.car}Driving</span>` : `<span class="pill warn">${I.car}Needs rides</span>`}</div>
         <div class="glance"><div style="background:var(--maroon)"><b>${total}</b><span>wadans</span></div><div style="background:var(--kesari)"><b>${plan.days.filter(d => d.stops.length).length}</b><span>days</span></div><div style="background:var(--gold)"><b>${plan.days.reduce((n, d) => n + d.legs.filter(l => !l.same).length, 0)}</b><span>trips</span></div></div>
+        ${db.meta.dressCode ? `<div class="muted">${I.shirt}${esc(db.meta.dressCode)}</div>` : ''}
         ${brings ? `<div class="muted">${I.info}You bring ${esc(brings)}.</div>` : ''}
         ${w.notes ? `<div class="muted">${I.info}${esc(w.notes)}</div>` : ''}
         <div class="muted" style="white-space:pre-line;border-top:1px dashed var(--line);padding-top:10px">${esc(mySummaryText(plan, true))}</div>
@@ -602,7 +611,7 @@ function renderMe() {
 }
 function mySummaryText(plan, short) {
   const w = plan.w; const lines = [];
-  if (!short) lines.push(`*${w.name} — ${db.meta.event || 'Wadan'}*`, `${insOf(w.instrument)?.label || 'Instrument not set'}${teamOf(w.team) ? ' · ' + teamOf(w.team).name : ''}${w.car ? ' · driving' : ''}`, '');
+  if (!short) { lines.push(`*${w.name} — ${db.meta.event || 'Wadan'}*`, `${insOf(w.instrument)?.label || 'Instrument not set'}${teamOf(w.team) ? ' · ' + teamOf(w.team).name : ''}${w.car ? ' · driving' : ''}`); if (db.meta.dressCode) lines.push(`👕 ${db.meta.dressCode}`); lines.push(''); }
   plan.days.forEach(d => {
     if (!d.stops.length) return;
     lines.push(`${short ? '' : '*'}${fmtDate(d.date)}${short ? '' : '*'}`);
@@ -616,6 +625,7 @@ function mySummaryText(plan, short) {
 // ---------- WhatsApp summary ----------
 function daySummary(date) {
   const lines = [`*${db.meta.event || 'Wadan'} — ${fmtDate(date)}*`, ''];
+  if (db.meta.dressCode) lines.push(`👕 Dress code: ${db.meta.dressCode}`, '');
   wadansOn(date).forEach(w => {
     const t = fmtTime(w.time); const c = counts(w.roster);
     lines.push(`*${t.h} ${t.ap} · ${w.name}*${w.venue ? ` (${w.venue})` : ''}`);
@@ -679,7 +689,7 @@ document.addEventListener('click', e => {
     case 'copyDay': navigator.clipboard.writeText(daySummary(ui.date)).then(() => toast('Copied — paste it into WhatsApp'), () => toast('Could not copy')); break;
     case 'print': window.print(); break;
     case 'settings': settingsModal(); break;
-    case 'saveSettings': settings = {me: $('#sMe').value.trim(), owner: $('#sOwner').value.trim(), repo: $('#sRepo').value.trim(), branch: $('#sBranch').value.trim() || 'main', path: $('#sPath').value.trim() || 'data/roster.json', token: $('#sToken').value.trim()}; localStorage.setItem(LS.settings, JSON.stringify(settings)); closeModal(); toast('Settings saved'); if (settings.token) load(); else render(); break;
+    case 'saveSettings': { settings = {me: $('#sMe').value.trim(), owner: $('#sOwner').value.trim(), repo: $('#sRepo').value.trim(), branch: $('#sBranch').value.trim() || 'main', path: $('#sPath').value.trim() || 'data/roster.json', token: $('#sToken').value.trim()}; localStorage.setItem(LS.settings, JSON.stringify(settings)); const dc = $('#sDress').value.trim(); if (dc !== (db.meta.dressCode || '')) { db.meta.dressCode = dc; markDirty(); } closeModal(); toast('Settings saved'); if (settings.token) load(); else render(); break; }
     case 'reload': closeModal(); localStorage.removeItem(LS.db); load(); break;
     case 'saveNow': closeModal(); saveToGitHub(); break;
     case 'closeModal': closeModal(); break;

@@ -4,7 +4,8 @@
   "event": "Ganesh Utsav 2026",
   "tagline": "॥ गणपती बाप्पा मोरया ॥",
   "updatedAt": "2026-09-17T00:00:00Z",
-  "updatedBy": "import"
+  "updatedBy": "import",
+  "dressCode": "Red kurta & pyjama for everyone, all events"
  },
  "instruments": [
   {
@@ -499,7 +500,7 @@
   {
    "id": "w19-oakville",
    "date": "2026-09-19",
-   "time": "11:00",
+   "time": "10:00",
    "name": "Oakville Yuva",
    "venue": "Oakville",
    "teams": [
@@ -521,14 +522,15 @@
     "pranoti",
     "rohit"
    ],
-   "notes": "Pranoti & Rohit join from Team B."
+   "notes": "Pranoti & Rohit join from Team B.",
+   "address": "3478 Rebecca St U107, Oakville, ON"
   },
   {
    "id": "w19-sta-telugu",
    "date": "2026-09-19",
-   "time": "16:00",
+   "time": "16:30",
    "name": "Scarborough Telugu Association",
-   "venue": "Scarborough",
+   "venue": "Nationwide Banquet Hall",
    "teams": [
     "b"
    ],
@@ -547,7 +549,8 @@
     "amol",
     "atul-k"
    ],
-   "notes": ""
+   "notes": "",
+   "address": "760 Birchmount Rd #41, Scarborough, ON"
   },
   {
    "id": "w19-clarington",
@@ -572,7 +575,8 @@
     "yogesh",
     "omkar"
    ],
-   "notes": ""
+   "notes": "",
+   "address": "Garnet B. Rickard Recreation Complex, Bowmanville, ON"
   },
   {
    "id": "w19-brampton-a",
@@ -597,7 +601,8 @@
     "yogesh",
     "omkar"
    ],
-   "notes": "Team A at 6:30 pm"
+   "notes": "Team A at 6:30 pm",
+   "address": "Jim Iron's Park, Brampton, ON"
   },
   {
    "id": "w19-brampton-b",
@@ -623,7 +628,8 @@
     "amol",
     "atul-k"
    ],
-   "notes": "Team B at 7 pm"
+   "notes": "Team B at 7 pm",
+   "address": "Jim Iron's Park, Brampton, ON"
   },
   {
    "id": "w19-shivray",
@@ -662,13 +668,14 @@
     "vishwak",
     "yogesh"
    ],
-   "notes": "Full pathak"
+   "notes": "Full pathak",
+   "address": "Hindu Sabha Mandir, Brampton, ON"
   },
   {
    "id": "w20-milton",
    "date": "2026-09-20",
    "time": "13:00",
-   "name": "Milton Friends Group",
+   "name": "Telugu Friends Club",
    "venue": "Milton",
    "teams": [
     "a"
@@ -691,7 +698,8 @@
     "apurva",
     "kshitij"
    ],
-   "notes": ""
+   "notes": "",
+   "address": "5234 Kelso Rd, Milton, ON"
   },
   {
    "id": "w20-kitchener",
@@ -712,13 +720,14 @@
     "ashwini",
     "shivani"
    ],
-   "notes": ""
+   "notes": "",
+   "address": "Kitchener, ON"
   },
   {
    "id": "w20-clarington",
    "date": "2026-09-20",
    "time": "16:00",
-   "name": "Clarington",
+   "name": "Clarington Cha Raja",
    "venue": "Clarington",
    "teams": [
     "a"
@@ -741,14 +750,15 @@
     "apurva",
     "kshitij"
    ],
-   "notes": ""
+   "notes": "",
+   "address": "Garnet B. Rickard Recreation Complex, Bowmanville, ON"
   },
   {
    "id": "w20-mississauga",
    "date": "2026-09-20",
-   "time": "17:30",
-   "name": "Mississauga",
-   "venue": "Mississauga",
+   "time": "17:00",
+   "name": "Samskrita Bharati Ganesh Utsav",
+   "venue": "Samskrita Bharati",
    "teams": [
     "b"
    ],
@@ -763,7 +773,8 @@
     "shivani",
     "pratham"
    ],
-   "notes": "5 dhol, 2 tasha"
+   "notes": "5 dhol, 2 tasha; Near Cooksville GO Station & TL Kennedy School (TowerPOPS)",
+   "address": "67 Hillcrest Avenue, Mississauga, ON"
   },
   {
    "id": "w20-shivray",
@@ -801,7 +812,8 @@
     "vishwak",
     "yogesh"
    ],
-   "notes": "Full pathak"
+   "notes": "Full pathak",
+   "address": "Hindu Sabha Mandir, Brampton, ON"
   }
  ]
 }
